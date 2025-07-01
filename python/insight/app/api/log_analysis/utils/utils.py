@@ -4,6 +4,8 @@ from app.api.log_analysis.repo.repo import LogAnalysisRepository
 from app.api.log_analysis.request.req import PostSessionBody, SessionIdPath, PostQueryBody
 from app.core.mcp.mcp_context import MCPContext
 
+from opentelemetry.trace import get_current_span
+
 from sqlalchemy.orm import Session
 
 from fastapi.responses import JSONResponse
@@ -11,6 +13,9 @@ from fastapi import HTTPException, status
 
 import os
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class LogAnalysisService:
@@ -39,7 +44,10 @@ class LogAnalysisService:
         )
 
     def get_sessions(self):
+        logger.info(f'get sessions sql service start')
         sessions = self.repo.get_all_sessions()
+        logger.info(f'get sessions sql service end')
+
         results = [
             self.map_session_to_res(session) for session in sessions
         ]

@@ -1,15 +1,19 @@
 from app.api.log_analysis.model.models import LogAnalysisChatSession
 
 from sqlalchemy.orm import Session
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 class LogAnalysisRepository:
     def __init__(self, db: Session):
         self.db = db
 
     def get_all_sessions(self):
-        return self.db.query(LogAnalysisChatSession).all()
+        logger.info(f'get session sql repo start')
+        result = self.db.query(LogAnalysisChatSession).all()
+        logger.info(f'get session sql repo end')
+        return result
 
     def create_session(self, session_data: dict):
         new_session = LogAnalysisChatSession(**session_data)

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from app.api.log_analysis.request.req import PostQueryBody, PostSessionBody, SessionIdPath
 from app.api.log_analysis.response.res import ResBodyLogAnalysisModel, ResBodyLogAnalysisSession, ResBodyLogAnalysisSessions, ResBodySessionHistory, ResBodyQuery
@@ -6,11 +6,12 @@ from app.api.log_analysis.utils.utils import LogAnalysisService
 from app.core.dependencies.mcp import get_mcp_context
 from app.core.mcp.mcp_context import MCPContext
 from app.core.dependencies.db import get_db
-
-from sqlalchemy.orm import Session
-
 from config.ConfigManager import ConfigManager
 
+from sqlalchemy.orm import Session
+import logging
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -22,6 +23,13 @@ router = APIRouter()
     operation_id="GetLogAnalysisModel"
 )
 async def get_log_analysis_model():
+    logger.info(f'get log analysis model')
+
+    try:
+        1/0
+    except Exception as e:
+        logger.exception(e)
+
     config = ConfigManager()
     model_info_config = config.get_model_config()
 
