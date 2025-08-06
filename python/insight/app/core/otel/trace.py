@@ -18,12 +18,15 @@ import os
 
 
 MODE = os.environ.get("MODE", "otlp-http")
-OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = os.environ.get("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "http://192.168.110.214:4318/v1/traces")
+# OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = os.environ.get("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "http://192.168.110.214:4318/v1/traces")
 
 class MySpanProcessor(BatchSpanProcessor):
     def __init__(self, span_exporter: SpanExporter):
         super().__init__(span_exporter)
-        self.exclude_type = ['http.request', 'http.response.start', 'http.response.body']
+        self.exclude_attribute = {
+            'type': ['http.request', 'http.response.start', 'http.response.body'],
+            'asgi.event.type': ['http.request', 'http.response.start', 'http.response.body']
+        }
 
     def on_end(self, span: ReadableSpan) -> None:
         if span.kind == SpanKind.INTERNAL and (
@@ -38,7 +41,7 @@ class MySpanProcessor(BatchSpanProcessor):
         super().on_end(span=span)
 
 
-def init_otel_trace(app) -> None:
+def init_otel_trace(app, otlp_traces_endpoint) -> None:
     tracer = TracerProvider(
         resource=Resource(
             {
@@ -51,7 +54,7 @@ def init_otel_trace(app) -> None:
 
     if MODE == "otlp-http":
         tracer.add_span_processor(
-            MySpanProcessor(OTLPSpanExporterHTTP(endpoint=OTEL_EXPORTER_OTLP_TRACES_ENDPOINT))
+            MySpanProcessor(OTLPSpanExporterHTTP(endpoint=otlp_traces_endpoint))
         )
 
     LoggingInstrumentor().instrument()

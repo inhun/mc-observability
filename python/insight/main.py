@@ -28,8 +28,11 @@ app.add_middleware(
     allow_headers=['*']
 )
 
-init_logger(export=False)
-init_otel_trace(app)
+traces_config = config.get_traces_config()
+logs_config = config.get_logs_config()
+
+init_otel_trace(app, otlp_traces_endpoint=traces_config["otlp_traces_endpoint"])
+init_logger(filename=logs_config["filename"], export=False)
 
 api_prefix = config.get_prefix()
 app.include_router(anomaly.router, prefix=api_prefix, tags=["[Insight] Anomaly Detection"])

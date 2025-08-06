@@ -87,3 +87,15 @@ class ConfigManager:
         return {
             "mcp_grafana_url": mcp.get('mcp_grafana_url', '')
         }
+
+    def get_traces_config(self):
+        traces = self.config.get('otel', {}).get('traces', {})
+        return {
+            "otlp_traces_endpoint": traces.get('otlp_traces_endpoint', '')
+        }
+
+    def get_logs_config(self):
+        logs = self.config.get('otel', {}).get('logs', {})
+        return {
+            "filename": logs.get('filename', '')
+        }

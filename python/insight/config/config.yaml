@@ -3,9 +3,12 @@ common:
     /api/o11y/insight
   DB:
     # URL: mc-observability-maria
-    URL: 192.168.170.229
-    USERNAME: mc-agent
-    PASSWORD: mc-agent
+    # URL: 192.168.170.229
+    URL: localhost
+    # USERNAME: mc-agent
+    # PASSWORD: mc-agent
+    USERNAME: root
+    PASSWORD: 1234
     DATABASE: mc_observability
   InfluxDB:
     HOST: mc-observability-influx
@@ -118,3 +121,9 @@ log_analysis:
         - gpt-3.5-turbo
   mcp:
     mcp_grafana_url: http://192.168.110.214:8000/sse
+
+otel:
+  traces:
+    otlp_traces_endpoint: http://192.168.110.214:4318/v1/traces
+  logs:
+    filename: ./log/log.log

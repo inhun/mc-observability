@@ -34,15 +34,14 @@ class FileLogExporter(LogExporter):
 
     def export(self, batch):
         for log_data in batch:
-            print(f'log_data: {log_data}')
-            self._file.write(log_data.log_record.to_json() + "\n")
+            self._file.write(log_data.log_record.to_json(indent=None) + "\n")
         self._file.flush()
         return True
 
     def shutdown(self):
         self._file.close()
 
-def init_logger(export=False):
+def init_logger(filename='./log/log.log', export=False):
     root_logger = logging.getLogger()
     logger_provider = LoggerProvider(
         resource=Resource.create(
@@ -53,7 +52,7 @@ def init_logger(export=False):
         ),
     )
 
-    exporter = FileLogExporter('./log/log2.log')
+    exporter = FileLogExporter(filename)
     batch_log_record_processor = BatchLogRecordProcessor(exporter=exporter)
     logger_provider.add_log_record_processor(batch_log_record_processor)
     handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
